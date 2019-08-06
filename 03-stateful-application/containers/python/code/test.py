@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+import MySQLdb
 from flask import Flask
 app = Flask(__name__)
 
@@ -11,9 +14,13 @@ def something():
 
 @app.route("/db")
 def databasetest():
-    some_variable = "put some database test string here and return the values"
-    if some_variable:
-        db_output = some_variable + "<br> because the database connection works!"
+
+    db = MySQLdb.connect(host="mariadb-node-portdefault.svc.cluster.local",
+                        user="test_user", 
+                        passwd="test_pass",
+                        db="test_db") 
+    if db:
+        db_output = "because the database connection works!"
     else:
         db_output = "db connection broke"
 
