@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  MYSQL_DATABASE: test_db
+  MYSQL_USER: test_user
+  MYSQL_PASSWORD: test_pass
+  MYSQL_RANDOM_ROOT_PASSWORD: yes
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,35 +25,26 @@ spec:
     spec:
       volumes:
         - name: 03-mariadb-volume
-          persistentVolumeClaim:
-            claimName: 03-mariadb-claim
+          emptyDir: {}
       containers:
         - name: 03-mariadb
           image: mariadb
           volumeMounts:
           - mountPath: "/var/lib/mysql"
             name: 03-mariadb-volume
-          env:
-          # obviously don't use this in the real world
-          # have some kind of secrets manager
-          - name: MYSQL_RANDOM_ROOT_PASSWORD
-            value: yes
-          - name: MYSQL_DATABASE
-            value: testdb
-          - name: MYSQL_USER
-            value: test_user
-          - name: MYSQLPASSWORD
-            value: test_pass
+          envFrom:
+          - configMapRef:
+              name: 03-mariadb-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: 03-mariadb-node-port
+  name: mariadb-node-port
 spec:
   type: NodePort
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 3306
+      nodePort: 30006
   selector:
     component: 03-mariadb-label
