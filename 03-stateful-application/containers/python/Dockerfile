@@ -6,5 +6,6 @@ COPY code/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY code/test.py .
+EXPOSE 5000
 
 CMD [ "python", "./test.py" ]
