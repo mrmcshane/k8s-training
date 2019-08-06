@@ -12,9 +12,6 @@ spec:
       labels:
         component: python-label
     spec:
-      volumes:
-        - name: python-volume
-          emptyDir: {}
       containers:
         - name: python
           image: andrewmcshanevaltech/python
