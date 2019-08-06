@@ -1,4 +1,21 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: 03-mariadb-volume
+  labels: 
+    label: 03-mariadb-volume-label
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: slow
+  mountOptions:
+    - hard
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: 03-mariadb-claim
@@ -10,3 +27,7 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: slow
+  selector: 
+    matchLabels: 
+      label: 03-mariadb-volume-label
+ 
