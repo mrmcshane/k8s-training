@@ -2,13 +2,6 @@ This is a basic repo to host the simple k8s projects I work on as I learn the te
 
 It will contain the practical work from the notes created at: https://ns1.ovh/k8s/overview/ covering the following areas:
 
-- 00 - k8s cluster setup
-- 01 - simple application
-- 02 - multi container pod
-- 03 - stateful application
-- 04 - namespaces
-- 0x - database cluster
-
 - [00 - k8s cluster setup](https://github.com/mrmcshane/k8s-training/tree/master/00-k8s-cluster-setup)
 - [01 - simple application](https://github.com/mrmcshane/k8s-training/tree/master/01-simple-application)
 - [02 - multi container pod](https://github.com/mrmcshane/k8s-training/tree/master/02-multi-container-pod)
