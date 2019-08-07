@@ -1,17 +1,45 @@
 This is a basic repo to host the simple k8s projects I work on as I learn the technology.
 
-It will contain the practical work from the notes created at: https://ns1.ovh/k8s/overview/
+It will contain the practical work from the notes created at: https://ns1.ovh/k8s/overview/ covering the following areas:
 
-Current Projects:
-- Simple Application
-- Multi-Container Pod
+- 00 - k8s cluster setup
+- 01 - simple application
+- 02 - multi container pod
+- 03 - stateful application
+- 04 - namespaces
+- 0x - database cluster
 
-## Simple Application
+- [00 - k8s cluster setup](https://github.com/mrmcshane/k8s-training/tree/master/00-k8s-cluster-setup)
+- [01 - simple application](https://github.com/mrmcshane/k8s-training/tree/master/01-simple-application)
+- [02 - multi container pod](https://github.com/mrmcshane/k8s-training/tree/master/02-multi-container-pod)
+- [03 - stateful application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application)
+- [04 - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces)
+- [0x - database cluster](https://github.com/mrmcshane/k8s-training/tree/master/0x-database-cluster)
 
-This is a very basic static html website added to the `nginx:alpine` image
+### 00 - k8s cluster setup
 
-## Multi-Container Pod
+Using https://github.com/ecomm-integration-ballerina/kubernetes-cluster, we build a 3 node cluster using virtualbox.
 
-An example use case of when it's a good idea to have multiple containers in a pod, building on the `nginx:alpine` and `php` images. It's constructed in a way that we don't have to build a seperate nginx image as kubernetes applies a configMap to place the nginx config file in the right place for the default nginx container. 
+### 01 - simple application
 
-The web content is placed on to the custom php image at build time, A shared volume is mapped to both containers and the content is copied over to the share at runtime so both containers have access.
+Deploy a static HTML website in a custom container.
+
+### 02 - multi container pod
+
+Deploy a PHP application, an example of how to deploy two very closely linked containers within the same pod (nginx/php).
+
+### 03 - stateful application
+
+Small python application that connects to a database.
+
+Note - still needs work to make the database volume persistent.
+
+### 04 - namespaces
+
+Working with namespaces to segregate applications.
+
+### 0x - database cluster
+
+How to deploy a fully scalable database cluster using k8s that supports automated recovery in the event of failure.
+
+Note - This is going to be a bit harder, as it also needs to incorporate some kind of backup system in the event the whole thing goes down.
