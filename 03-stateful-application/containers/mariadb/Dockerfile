@@ -1,8 +1,0 @@
-FROM mariadb
-
-ENV foo /bar
-ENV MYSQL_DATABASE test_db
-ENV MYSQL_USER test_user
-ENV MYSQL_PASSWORD test_pass
-ENV MYSQL_RANDOM_ROOT_PASSWORD yes
-
