@@ -15,7 +15,7 @@ def something():
 @app.route("/db")
 def databasetest():
 
-    db = MySQLdb.connect(host="mariadb-node-portdefault.svc.cluster.local",
+    db = MySQLdb.connect(host="localhost",
                         user="test_user", 
                         passwd="test_pass",
                         db="test_db") 
