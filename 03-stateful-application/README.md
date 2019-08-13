@@ -27,8 +27,7 @@ Both deployments have been seperated out into seperate files so you can update t
 
 ## Python Application
 
-I won't paste all of the application code as the codeitself doesn't matter, if you want to use it, it's hosted here:
-https://github.com/mrmcshane/k8s-training/blob/master/03-stateful-application/containers/python/code/test.py
+I won't paste all of the application code as the codeitself doesn't matter, if you want to use it, it's hosted [here](https://github.com/mrmcshane/k8s-training/blob/master/03-stateful-application/containers/python/code/test.py).
 
 The main part of the application that matters is the database connection string:
 ```
@@ -49,7 +48,7 @@ A new image is created to add our small program and deployed via k8s.
 
 ### Dockerfile
 
-This is the basic docker config, it copies over the code,installs the python dependencies, and then runs the application.
+This is the basic docker config, it copies over the code, installs the python dependencies, and then runs the application.
 ```
 FROM python:3
 
