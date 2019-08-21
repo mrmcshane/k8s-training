@@ -6,8 +6,15 @@ It will contain the practical work from the notes created at: https://ns1.ovh/k8
 - [01 - simple application](https://github.com/mrmcshane/k8s-training/tree/master/01-simple-application)
 - [02 - multi container pod](https://github.com/mrmcshane/k8s-training/tree/master/02-multi-container-pod)
 - [03 - stateful application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application)
-- [04 - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces)
+- [0x - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/0x-namespaces)
 - [0x - database cluster](https://github.com/mrmcshane/k8s-training/tree/master/0x-database-cluster)
+- [0x - ingress](https://github.com/mrmcshane/k8s-training/tree/master/0x-ingress)
+- [0x - helm](https://github.com/mrmcshane/k8s-training/tree/master/0x-helm)
+- [0x - istio](https://github.com/mrmcshane/k8s-training/tree/master/0x-istio)
+
+This is not complete and will be changed/updated as I go.
+The `0x` headers are for planned work, may or may not happen. 
+
 
 ### 00 - k8s cluster setup
 
@@ -27,7 +34,7 @@ Small python application that connects to a database.
 
 Note - still needs work to make the database volume persistent.
 
-### 04 - namespaces
+### 0x - namespaces
 
 Working with namespaces to segregate applications.
 
@@ -36,3 +43,15 @@ Working with namespaces to segregate applications.
 How to deploy a fully scalable database cluster using k8s that supports automated recovery in the event of failure.
 
 Note - This is going to be a bit harder, as it also needs to incorporate some kind of backup system in the event the whole thing goes down.
+
+### 0x - ingress
+
+Creating ingress points for your application.
+
+### 0x - helm
+
+Deploying applications with helm.
+
+### 0x - istio
+
+Deploying istio into your environment.
