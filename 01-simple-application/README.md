@@ -13,9 +13,9 @@ Create a directory structure like below, feel free to clone the repo to get the 
 01-simple-application
 |-- containers
 |   `-- web
-|   |   |-- app
-|   |   |   `-- ...
-|   |   `-- Dockerfile
+|       |-- app
+|       |   `-- ...
+|       `-- Dockerfile
 |-- web.yml
 `-- README.md
 ```
