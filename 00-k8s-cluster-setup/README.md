@@ -25,4 +25,11 @@ Host k8
   IdentityFile ~/.ssh/k-cluster
 ```
 
+Now you can ssh to the `k8s-head` instace with:
+```
+ssh k8
+```
 
+This guide assumes you have access to a source control repository such as github.
+
+The tasks will be done on your local machine and the result pushed to source control. Then on the k8s-head, you will pull the repository before deploying.

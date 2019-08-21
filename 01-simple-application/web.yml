@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: web-label
+  template:
+    metadata:
+      labels:
+        component: web-label
+    spec:
+      containers:
+        - name: web-container
+          image: andrewmcshanevaltech/web
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-nodeport
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30001
+  selector:
+    component: web-label
