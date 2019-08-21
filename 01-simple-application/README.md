@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
         - name: web-container
-          image: andrewmcshanevaltech/web
+          image: mrmcshane/web
           ports:
             - containerPort: 80
 ```
@@ -107,12 +107,12 @@ Services also control the port mapping from outside the pod to inside the pod th
 
 Build web image:
 ```
-docker build containers/web -t andrewmcshanevaltech/web
+docker build containers/web -t mrmcshane/web
 ```
 
 Push custom image to dockerhub:
 ```
-docker push andrewmcshanevaltech/web
+docker push mrmcshane/web
 ```
 
 Apply the deployment file:

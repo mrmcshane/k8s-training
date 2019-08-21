@@ -11,12 +11,12 @@ A pod is meant to be the smallest unit of your application that can run independ
 
 Build custom php image
 ```
-docker build containers/php -t andrewmcshanevaltech/ip.ns1.ovh-php
+docker build containers/php -t mrmcshane/ip.ns1.ovh-php
 ```
 
 Push custom php image to dockerhub
 ```
-docker push andrewmcshanevaltech/ip.ns1.ovh-php
+docker push mrmcshane/ip.ns1.ovh-php
 ```
 
 Apply the deployment file:

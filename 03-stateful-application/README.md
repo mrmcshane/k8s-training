@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
         - name: python
-          image: andrewmcshanevaltech/python
+          image: mrmcshane/python
           ports:
           - containerPort: 80
 ```

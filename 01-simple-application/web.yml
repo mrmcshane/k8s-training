@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: web-container
-          image: andrewmcshanevaltech/web
+          image: mrmcshane/web
           ports:
             - containerPort: 80
 ---

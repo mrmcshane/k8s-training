@@ -54,7 +54,7 @@ spec:
 
       containers:
         # Our PHP-FPM application
-        - image: andrewmcshanevaltech/ip.ns1.ovh-php
+        - image: mrmcshane/ip.ns1.ovh-php
           name: ip-ns1-ovh-php
           volumeMounts:
             - name: shared-files
