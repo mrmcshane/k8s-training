@@ -77,8 +77,6 @@ data:
 
 ### Deployment
 
-__needs reviewing__
-
 The deployment config is similar to the previous task with two main additions; a shared volume, and how to apply the config map.
   
 
