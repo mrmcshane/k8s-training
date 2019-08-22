@@ -12,7 +12,6 @@ data:
         listen [::]:80 default_server;
         index index.php;
         
-        # Set nginx to serve files from the shared volume!
         root /var/www/html;
         server_name _;
         location / {
@@ -26,36 +25,30 @@ data:
         }
       }
     }
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ip-ns1-ovh-deployment
+  name: php-deployment
 spec:
-  replicas: 6
+  replicas: 3
   selector:
     matchLabels:
-      component: label-ip-ns1-ovh
+      component: php-label
   template:
     metadata:
       labels:
-        component: label-ip-ns1-ovh
+        component: php-label
     spec:
       volumes:
-        # Create the shared files volume to be used in both pods
         - name: shared-files
           emptyDir: {}
-        
-        # Add the ConfigMap we declared above as a volume for the pod
         - name: nginx-config-volume
           configMap:
             name: nginx-config
-
       containers:
-        # Our PHP-FPM application
-        - image: mrmcshane/ip.ns1.ovh-php
-          name: ip-ns1-ovh-php
+        - image: mrmcshane/php
+          name: php
           volumeMounts:
             - name: shared-files
               mountPath: /var/www/html
@@ -63,14 +56,8 @@ spec:
             postStart:
               exec:
                 command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html"]
-          resources:
-            limits:
-              memory: 100Mi
-        
-        # Our nginx container, which uses the configuration declared above,
-        # along with the files shared with the PHP-FPM app.
         - image: nginx:alpine
-          name: ip-ns1-ovh-nginx
+          name: nginx
           volumeMounts:
             - name: shared-files
               mountPath: /var/www/html
@@ -79,15 +66,11 @@ spec:
               subPath: nginx.conf
           ports:
             - containerPort: 80
-          resources:
-            limits:
-              memory: 100Mi
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: client-node-port
+  name: php-nodeport
 spec:
   type: NodePort
   ports:
@@ -95,4 +78,4 @@ spec:
       targetPort: 80
       nodePort: 31111
   selector:
-    component: label-ip-ns1-ovh
+    component: php-label
