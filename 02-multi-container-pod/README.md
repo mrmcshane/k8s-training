@@ -79,31 +79,93 @@ data:
 
 __needs reviewing__
 
-The general deployment config is much the same as a simple application, but with two differences:
-
-- Shared Volume
-- Apply config Map
+The deployment config is similar to the previous task with two main additions; a shared volume, and how to apply the config map.
   
 
 #### Shared Volume
 
+We could have put a copy of the application code on both containers diretly, but that require a second 
 
+The `php` image is built with the application code baked in. Once the container starts, the first task it performs will be to copy the application code to the shared volume, allowing access to the code form the `nginx` image.
+
+First we create a blank volume under the deployment tamplate:
+```
+spec:
+  volumes:
+    - name: shared-files
+      emptyDir: {}
+```
+
+Then we map the volume to each container:
+```
+- image: nginx:alpine
+  name: nginx
+  volumeMounts:
+    - name: shared-files
+      mountPath: /var/www/html
+```
+
+For the `php` container, we add an extra step to run a command to copy the app code over on startup:
+```
+- image: mrmcshane/php
+  name: php
+  volumeMounts:
+    - name: shared-files
+      mountPath: /var/www/html
+  lifecycle:
+    postStart:
+      exec:
+        command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html"]
+```
 
 #### Apply Config Map
 
+An additional volume is created containing the config map:
 
+```
+spec:
+    volumes:
+    - name: shared-files
+        emptyDir: {}
+    - name: nginx-config-volume
+        configMap:
+        name: nginx-config
+```
 
+To apply a config map as a file, we add an additional volume mount to the nginx container.
 
+- **name:** Name of the volume the config map is assigned to.
+- **mountPath:** Config file you wish to create.
+- **subPath:** The key of your config within the configmap (as it can contain multiple keys).
 
+```
+- image: nginx:alpine
+  name: nginx
+  volumeMounts:
+    - name: shared-files
+      mountPath: /var/www/html
+    - name: nginx-config-volume
+      mountPath: /etc/nginx/nginx.conf
+      subPath: nginx.conf
+```
 
+### Service
 
-
-
-
-
-
-
-
+The service is pretty straightforward:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-nodeport
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31111
+  selector:
+    component: php-label
+```
 
 
 
@@ -111,15 +173,15 @@ The general deployment config is much the same as a simple application, but with
 
 Build custom php image
 ```
-docker build containers/php -t mrmcshane/ip.ns1.ovh-php
+docker build containers/php -t mrmcshane/php
 ```
 
 Push custom php image to dockerhub
 ```
-docker push mrmcshane/ip.ns1.ovh-php
+docker push mrmcshane/php
 ```
 
 Apply the deployment file:
 ```
-kubectl apply -f deployment.yml
+kubectl apply -f php.yml
 ```
