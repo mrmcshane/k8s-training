@@ -1,2 +1,2 @@
-flaskmysqlclient
+mysqlclient
 flask
