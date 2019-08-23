@@ -189,9 +189,3 @@ Apply the deployment file:
 kubectl apply -f php.yml
 ```
 
-
-# NOTE TO SELF
-
-Something wrong with the way the CSS renders on the PHP application.
-
-Try and take the material theme css and stip out everything that we don't need, while keeping the style the same.
