@@ -21,12 +21,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: python-node-port
+  name: python-lb
 spec:
-  type: NodePort
+  type: LoadBalancer
+  loadBalancerIP: 35.228.167.106
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30005
   selector:
     component: python-label

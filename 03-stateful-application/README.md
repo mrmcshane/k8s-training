@@ -184,17 +184,56 @@ spec:
 
 ## Deploying the application
 
+It's a simple `apply` to deploy the applications:
+```
+kubectl apply -f deployment-mariadb.yml
+kubectl apply -f deployment-python.yml
+```
+
+## Deploying on GCP
+
+First, we need to create a static IP so we can configure a DNS record to point to our loadbalancer:
+```
+gcloud compute addresses create [name] --region europe-north1
+```
+
+To get the external IP address, we can use:
+```
+gcloud compute addresses describe [name] --region europe-north1 --format='value(address)'
+```
+
+As we are deploying this on a cloud platform, replace the `NodePort` service in the `deployment-python.yml` config with a Loadbalancer configuration containing the Static IP:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-lb
+spec:
+  type: LoadBalancer
+  loadBalancerIP: [Static IP]
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    component: python-label
+```
+
 As before, it's a simple `apply` to deploy the applications:
 ```
 kubectl apply -f deployment-mariadb.yml
 kubectl apply -f deployment-python.yml
 ```
 
+
 ## Note
 
-These two links helped me:
+These links helped me:
 
 - create a basic web application: [pythonspot](https://pythonspot.com/flask-web-app-with-python/)
 
 - connecting python to mysql: [stackoverflow](https://stackoverflow.com/questions/51191563/connecting-python-and-mysql-in-docker-docker-compose)
+
+- [Google Docs - Deploying a containerized web application](https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app)
+
+- [Google Docs - Configuring Domain Names with Static IP Addresses](https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip)
 
