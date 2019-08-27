@@ -202,7 +202,7 @@ To get the external IP address, we can use:
 gcloud compute addresses describe [name] --region europe-north1 --format='value(address)'
 ```
 
-As we are deploying this on a cloud platform, replace the `NodePort` service in the `deployment-python.yml` config with a Loadbalancer configuration containing the Static IP:
+As we are deploying this on a cloud platform, replace the `NodePort` service in the `deployment-python.yml` config with a `Loadbalancer` service containing the Static IP:
 ```
 apiVersion: v1
 kind: Service
