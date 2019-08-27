@@ -6,10 +6,10 @@ It will contain the practical work from the notes created at: https://ns1.ovh/k8
 - [01 - simple application](https://github.com/mrmcshane/k8s-training/tree/master/01-simple-application)
 - [02 - multi container pod](https://github.com/mrmcshane/k8s-training/tree/master/02-multi-container-pod)
 - [03 - stateful application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application)
-- [0x - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/0x-namespaces)
+- [04 - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces)
+- [05 - helm](https://github.com/mrmcshane/k8s-training/tree/master/05-helm)
 - [0x - database cluster](https://github.com/mrmcshane/k8s-training/tree/master/0x-database-cluster)
 - [0x - ingress](https://github.com/mrmcshane/k8s-training/tree/master/0x-ingress)
-- [0x - helm](https://github.com/mrmcshane/k8s-training/tree/master/0x-helm)
 - [0x - istio](https://github.com/mrmcshane/k8s-training/tree/master/0x-istio)
 
 This is not complete and will be changed/updated as I go.
@@ -34,9 +34,13 @@ Small python application that connects to a database.
 
 Note - still needs work to make the database volume persistent.
 
-### 0x - namespaces
+### 04 - namespaces
 
 Working with namespaces to segregate applications.
+
+### 05 - helm
+
+Helm is a way of templating kubernetes deployments, this allows us to cut down on the amount of duplicated code from the deployments in task 04 by creating the same application using helm templates.
 
 ### 0x - database cluster
 
@@ -47,10 +51,6 @@ Note - This is going to be a bit harder, as it also needs to incorporate some ki
 ### 0x - ingress
 
 Creating ingress points for your application.
-
-### 0x - helm
-
-Deploying applications with helm.
 
 ### 0x - istio
 
