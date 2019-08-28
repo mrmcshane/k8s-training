@@ -1,4 +1,4 @@
-# Namespoaces
+# Namespaces
 
 The source for this can be found on my [github](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces).
 
