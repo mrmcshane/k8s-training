@@ -21,10 +21,11 @@ Kubernetes manages these containers at scale, assigning them to orchestration gr
 
 Like most orchestration tools, a kubernetes deployment is defined in a number of manifests. These manifests describe the desired state of a kubernetes application.
 
+These desired states are given to the control plane, which manages the cluster. The desired state of the cluster is applied with what's known as a **control loop**:
 
 ![control loop](img/control_loop.png "control loop")
 
-
+This takes the desired state of the cluster and observes the current state, if there is a difference, it acts to apply the changes. Once the changes are applied it restarts the loop, observing the current state comparing it against the desired state, ensuring it's constantly staying up to date and that no configuration drift has occurred.
 
 ## Kubernetes overview
 
@@ -32,8 +33,7 @@ This is the logical heirarchy of a kubernetes environment.
 
 ![overview](img/k8s_overview.png "overview")
 
-The individual components are described below:
-
+**Note:** This is a logical overview, A deployment consisting of more than one pod will be spread across a number of physical nodes to ensure high availability and fault tolerance.
 
 ### Pods
 
