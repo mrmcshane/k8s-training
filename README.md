@@ -41,7 +41,7 @@ Pods are the smallest component that kubernetes manages. These can be comprised 
 
 ### Deployments
 
-A deployment is how we manage groups of pods. 
+A deployment is how we manage groups of pods. Pods are usually configured as a template and assigned to a `Replica Set`, then the replica set is deployed using a deployment. This allows us to deploy multiple copies of a pod for high availability.
 
 ![deployments](img/k8s_deployment.png "deployments")
 
