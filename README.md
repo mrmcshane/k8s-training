@@ -13,36 +13,80 @@ Kubernetes is an orchestration tool for container technologies, mainly docker.
 
 ## Why use Kubernetes
 
-Docker allows a process to run in an isolated container, bundles with its dependencies. However with docker, these containers need to be managed individually.
+Docker allows a process to run in an isolated container, bundled with its dependencies. However with docker, these containers need to be managed individually.
 
 Kubernetes manages these containers at scale, assigning them to orchestration groups to manage their replication and availability. With these orchestration groups in place, the groups of containers become highly available and fault tolerant.
 
 ## How is kubernetes used
 
-Like most orchestration tools, kubernetes 
+Like most orchestration tools, a kubernetes deployment is defined in a number of manifests. These manifests describe the desired state of a kubernetes application.
+
+
+![control loop](img/control_loop.png "control loop")
+
+
 
 ## Kubernetes overview
 
+This is the logical heirarchy of a kubernetes environment.
+
 ![overview](img/k8s_overview.png "overview")
+
+The individual components are described below:
+
 
 ### Pods
 
+Pods are the smallest component that kubernetes manages. These can be comprised of one or more containers (usually one).
+
 ### Deployments
+
+A deployment is how we manage groups of pods. 
 
 ![deployments](img/k8s_deployment.png "deployments")
 
 ### Networking
 
-#### Services
+This is a rough idea of the network heirarchy within a kubernetes cluster. Deployments and containers have no part in networking, it's done between the **Ingress**, **Services**, and the **Pods**:
 
+![networking](img/k8s_networking.png "networking")
 
 
 #### Ingress
 
 Ingress is the network entrypoint to your internal cluster network.
+
 It contains routing rules to ensure network traffic is routed to the correct locations.
 
-![networking](img/k8s_networking.png "networking")
+Public Cloud platforms will usually have their own Ingress controller that integrate effectively with their underlying infrastructure. Most Ingress controllers run nginx.
+
+#### Services
+
+Services are how we assign networking to a pod.
+
+This is done by assigning a label to the pod in the format `key:value`: 
+```
+template:
+  metadata:
+    labels:
+      key: value
+```
+
+The service then attached itself to those pods by using a selector:
+```
+spec:
+  selector:
+    key: value
+```
+
+There are several types of services that can be deployed the descriptions below are taken from the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/services-networking/service/):
+
+- **ClusterIP:** Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType.
+- **NodePort:** Exposes the Service on each Node’s IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You’ll be able to contact the NodePort Service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
+- **LoadBalancer:** Exposes the Service externally using a cloud provider’s load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.
+- **ExternalName:** Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.
+
+
 
 ### Namespaces
 
