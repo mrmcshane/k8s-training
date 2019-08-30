@@ -37,7 +37,11 @@ You will usually find more containers in a pod if you have a custom logging or m
 
 ![deployments](img/k8s_deployment.png "deployments")
 
-A deployment is how we manage groups of pods. Pods are usually configured as a template and assigned to a `Replica Set`, then the replica set is deployed using a deployment. This allows us to deploy multiple copies of a pod for high availability.
+A deployment is how we manage groups of pods. 
+
+Pods are usually configured as a template and assigned to a `Replica Set`, then the replica set is deployed using a deployment. 
+
+This allows us to deploy multiple copies of a pod for high availability.
 
 
 ### Logical overview
