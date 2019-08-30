@@ -81,7 +81,7 @@ It's done between the *Ingress*, *Services* and the *Pods*
 
 #### Ingress
 
-![ingress](img/k8s_ingress.png "ingress") -->
+![ingress](img/k8s_ingress.png "ingress")
 
 Ingress is the network entry point to your internal cluster network.
 
