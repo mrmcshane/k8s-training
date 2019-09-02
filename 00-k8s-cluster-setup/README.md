@@ -7,6 +7,7 @@ Install several things before starting:
 - git
 - docker
 - kubernetes
+- vagrant
 
 
 I used this repo for setting up my cluster config:
