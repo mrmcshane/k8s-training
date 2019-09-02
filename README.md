@@ -19,7 +19,11 @@ Kubernetes manages these containers at scale, assigning them to orchestration gr
 
 ## Kubernetes Components
 
+### Clusters and Namespaces
 
+A Kubernetes Cluster encompasses every component
+
+A Namespace is a virtual cluster used for application isolation
 
 
 ### Pods
@@ -28,7 +32,7 @@ Pods are the smallest component that Kubernetes manages.
 
 ![pods](img/k8s_pods.png "pods")
 
-These can be comprised of one or more containers (usually one).
+These can be comprised of one or more containers, usually one.
 
 You will usually find more containers in a pod if you have a custom logging or monitoring system.
 
@@ -84,9 +88,9 @@ It's done between the *Ingress*, *Services* and the *Pods*
 ![ingress](img/k8s_ingress.png "ingress")
 
 Ingress is the network entry point to your internal cluster network.
-
+
 It contains routing rules to ensure network traffic is routed to the correct locations.
-
+
 Public Cloud platforms will usually have their own Ingress controller that integrate effectively with their underlying infrastructure. Most Ingress controllers run nginx.
 
 #### Services
