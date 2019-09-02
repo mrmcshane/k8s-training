@@ -3,11 +3,31 @@
 Rough guide on creating a local k8s cluster on a mac.
 
 Install several things before starting:
+
 - virtualbox
+  ```
+  brew cask install virtualbox
+  ```
+
 - git
+  ```
+  brew install git
+  ```
+
 - docker
+  ```
+  brew install docker
+  ```
+
 - kubernetes
+  ```
+  brew install kubernetes
+  ```
+
 - vagrant
+  ```
+  brew cask install vagrant
+  ```
 
 
 I used this repo for setting up my cluster config:
