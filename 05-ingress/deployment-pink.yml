@@ -1,0 +1,83 @@
+# MariaDB
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pink-mariadb-config
+data:
+  MYSQL_DATABASE: test_db
+  MYSQL_USER: test_user
+  MYSQL_PASSWORD: test_pass
+  MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pink-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: pink-mariadb
+  template:
+    metadata:
+      labels:
+        component: pink-mariadb
+    spec:
+      volumes:
+        - name: pink-mariadb-volume
+          emptyDir: {}
+      containers:
+        - name: pink-mariadb
+          image: mariadb
+          volumeMounts:
+          - mountPath: "/var/lib/mysql"
+            name: pink-mariadb-volume
+          envFrom:
+          - configMapRef:
+              name: pink-mariadb-config
+---
+apiVersion: v1
+kind: Service
+metadata:  
+  name: pink-mariadb-clusterip
+spec:
+  selector:    
+    component: pink-mariadb
+  type: ClusterIP
+  ports:  
+  - name: pink-mariadb
+    port: 3306
+    targetPort: 3306
+    protocol: TCP
+---
+# Python
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pink-python
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: pink-python
+  template:
+    metadata:
+      labels:
+        component: pink-python
+    spec:
+      containers:
+        - name: pink-python
+          image: mrmcshane/pink-python
+          ports:
+          - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pink-service
+spec:
+  type: LoadBalancer
+  selector:
+    component: pink-python
+  ports:
+    - port: 80

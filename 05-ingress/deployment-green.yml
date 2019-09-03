@@ -1,0 +1,83 @@
+# MariaDB
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: green-mariadb-config
+data:
+  MYSQL_DATABASE: test_db
+  MYSQL_USER: test_user
+  MYSQL_PASSWORD: test_pass
+  MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: green-mariadb
+  template:
+    metadata:
+      labels:
+        component: green-mariadb
+    spec:
+      volumes:
+        - name: green-mariadb-volume
+          emptyDir: {}
+      containers:
+        - name: green-mariadb
+          image: mariadb
+          volumeMounts:
+          - mountPath: "/var/lib/mysql"
+            name: green-mariadb-volume
+          envFrom:
+          - configMapRef:
+              name: green-mariadb-config
+---
+apiVersion: v1
+kind: Service
+metadata:  
+  name: green-mariadb-clusterip
+spec:
+  selector:    
+    component: green-mariadb
+  type: ClusterIP
+  ports:  
+  - name: green-mariadb
+    port: 3306
+    targetPort: 3306
+    protocol: TCP
+---
+# Python
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-python
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: green-python
+  template:
+    metadata:
+      labels:
+        component: green-python
+    spec:
+      containers:
+        - name: green-python
+          image: mrmcshane/green-python
+          ports:
+          - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: green-service
+spec:
+  type: LoadBalancer
+  selector:
+    component: green-python
+  ports:
+    - port: 80

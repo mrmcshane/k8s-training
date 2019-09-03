@@ -1,0 +1,83 @@
+# MariaDB
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blue-mariadb-config
+data:
+  MYSQL_DATABASE: test_db
+  MYSQL_USER: test_user
+  MYSQL_PASSWORD: test_pass
+  MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: blue-mariadb
+  template:
+    metadata:
+      labels:
+        component: blue-mariadb
+    spec:
+      volumes:
+        - name: blue-mariadb-volume
+          emptyDir: {}
+      containers:
+        - name: blue-mariadb
+          image: mariadb
+          volumeMounts:
+          - mountPath: "/var/lib/mysql"
+            name: blue-mariadb-volume
+          envFrom:
+          - configMapRef:
+              name: blue-mariadb-config
+---
+apiVersion: v1
+kind: Service
+metadata:  
+  name: blue-mariadb-clusterip
+spec:
+  selector:    
+    component: blue-mariadb
+  type: ClusterIP
+  ports:  
+  - name: blue-mariadb
+    port: 3306
+    targetPort: 3306
+    protocol: TCP
+---
+# Python
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-python
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: blue-python
+  template:
+    metadata:
+      labels:
+        component: blue-python
+    spec:
+      containers:
+        - name: blue-python
+          image: mrmcshane/blue-python
+          ports:
+          - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: blue-service
+spec:
+  type: LoadBalancer
+  selector:
+    component: blue-python
+  ports:
+    - port: 80
