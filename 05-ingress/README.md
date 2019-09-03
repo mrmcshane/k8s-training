@@ -1,65 +1,77 @@
-# Namespaces
+# Ingress
 
-The source for this can be found on my [github](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces).
+The source for this can be found on my [github](https://github.com/mrmcshane/k8s-training/tree/master/05-ingress).
 
-Namespaces are a way to seperate your cluster into virtual clusters.
+An Ingress is essentially a layer 7 (application) loadbalancer, it allows external access to the cluster and the applications within.
 
-We will be deploying two modified versions of the stateful application, each in a different namespace.
-
+**Note:** This is being configured on GKE on GCP, not a local cluster.
 
 ## Structure
 
-Your directory structure should look something like this:
+We will be deploying multiple versions of the python/mariadb application, with access to each of them configured as seperate subdomains all accessed through the ingress service.
 ```
-04-namespaces
+05-ingress
 |-- containers
-|   `-- python
-|       |-- code
-|       |   |-- requirements.txt
-|       |   `-- test.py
-|       `-- Dockerfile
+|   |-- blue-python
+|   |   `-- ...
+|   |-- green-python
+|   |   `-- ...
+|   `-- pink-python
+|       `-- ...
 |-- deployment-blue.yml
-`-- deployment-green.yml
+|-- deployment-green.yml
+|-- deployment-pink.yml
+`-- ingress.yml
 ```
-The deployment files for mariadb and python have been merged into the same config files, one for each namespace (blue/green).
 
 
 ## Python Application
 
-
-Like in [03-stateful-application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application), we are testing connectivity with a simple database connection string. However this time, each python application in both namespaces will be configured with two connection strings:
+The main difference in this application is the connection string in each of the applications only specifies its own database:
 ```
-host="mariadb-clusterip.blue"
-host="mariadb-clusterip.green"
+MySQLdb.connect(host="blue-mariadb-clusterip")
 ```
 
-This allows us to cross namespaces if needed to access resources outside of our current namespace.
+Three different versions of the container will be deployed as the css has been updated to differentiate each application.
 
-If the namespaces need to be segregated, you would only need this connection string in both namespace deployments:
-```
-host="mariadb-clusterip"
-```
-Without explicitly stating the namespace for the resource, an application will only be able to reference resources within its own namespace.
 
-## Namespace Decleration
+## ingress.yml
 
-To create a namespace, it's a simple declaration:
+To create an ingress resource, we need the following:
 ```
-apiVersion: v1
-kind: Namespace
+apiVersion: extensions/v1beta1
+kind: Ingress
 metadata:
-  name: blue
+  name: ingress-resource
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/add-base-url: "true"
 ```
-## Namespace Assignment
 
-To assign a resource to a namespace, it's just a case of adding a `namespace` key to the metadata of a resource:
+Then to specify the routing rules to access the backends:
 ```
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mariadb-config
-  namespace: blue
+spec:
+  rules:
+  - host: pink.domain.com
+    http:
+      paths:
+      - backend:
+          serviceName: pink-service
+          servicePort: 80
+  - host: blue.domain.com
+    http:
+      paths:
+      - backend:
+          serviceName: blue-service
+          servicePort: 80
+  - host: green.domain.com
+    http:
+      paths:
+      - backend:
+          serviceName: green-service
+          servicePort: 80
 ```
+ 
 
 ## Deploying the application
 
@@ -67,15 +79,13 @@ It's a simple `apply` to deploy the applications:
 ```
 kubectl apply -f deployment-blue.yml
 kubectl apply -f deployment-green.yml
+kubectl apply -f deployment-pink.yml
+kubectl apply -f ingress.yml
 ```
+
 
 ## Testing
 
-To test this is working, bring up only one of the namespace deployments and visit the application, then bring the second and watch the application connect.
+To test this is working, add dns records for your subdomains to point to the external IP of the ingress controller. Once the new DNS records have propogated, visit the URLs to test your application. 
 
-
-## Note
-
-This link helped me:
-
-- [Kubernetes best practices: Organizing with Namespaces](https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-organizing-with-namespaces)
+Please note that DNS propogation can take up to 24 hours.
