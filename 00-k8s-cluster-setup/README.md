@@ -35,22 +35,13 @@ https://github.com/ecomm-integration-ballerina/kubernetes-cluster
 
 It will create a 3 node k8s cluster on virtualbox.
 
-When this is created, add a port forwarding rule to the `k8s-head` vm to forward 2222 on your local machine to port 22 on the vm.
-
-I use this `~/.ssh/config` to allow easy access:
+Instead of creating addidtional kubectl config files and configuring port forwarding to the vitrualbox VMs, we will be running all of the kubernetes commands in this example on the `k8s-head` instance. As this was configured with vagrant, this can be done by running:
 ```
-Host k8
-  HostName 127.0.0.1
-  Port 2222
-  User vagrant
-  IdentityFile ~/.ssh/k-cluster
+vagrant ssh k8s-head
 ```
 
-Now you can ssh to the `k8s-head` instace with:
+Once there, you can clone and enter the repo containing the tasks:
 ```
-ssh k8
+git clone https://github.com/mrmcshane/k8s-training.git
+cd k8s-training
 ```
-
-This guide assumes you have access to a source control repository such as github.
-
-The tasks will be done on your local machine and the result pushed to source control. Then on the k8s-head, you will pull the repository before deploying.
