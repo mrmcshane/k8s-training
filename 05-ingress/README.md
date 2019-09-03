@@ -83,6 +83,11 @@ kubectl apply -f deployment-pink.yml
 kubectl apply -f ingress.yml
 ```
 
+Alternatively, to apply all manifest files within te directory:
+```
+kubectl apply -f .
+```
+
 
 ## Testing
 
