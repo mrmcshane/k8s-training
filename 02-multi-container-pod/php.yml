@@ -41,15 +41,26 @@ spec:
         component: php-label
     spec:
       volumes:
+        - name: shared-files
+          emptyDir: {}
         - name: nginx-config-volume
           configMap:
             name: nginx-config
       containers:
         - image: mrmcshane/php
           name: php
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html"]
         - image: nginx:alpine
           name: nginx
           volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
             - name: nginx-config-volume
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf

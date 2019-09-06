@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.python.name }}
+  labels:
+{{ .Values.python.labels }}
+spec:
+  type: {{ .Values.python.service.type }}
+  ports:
+    - port: {{ .Values.python.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ .Values.python.name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
