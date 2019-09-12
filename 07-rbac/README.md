@@ -5,6 +5,13 @@ The source for this can be found on my [github](https://github.com/mrmcshane/k8s
 Role Based Access Control (RBAC) is how we lock down access to resources/functionality in kubernetes. It can get reasonably complicated, but in this example, we will be creating one read/write user for each of the namespaces and one read-only user with access to the whole cluster.
 
 
+
+## RBAC Overview
+
+Go into a little detail how RBAC is condigured with a couple of diagrams.
+
+
+
 ## Structure
 
 Your directory structure should look something like this:
