@@ -10,12 +10,6 @@ Role Based Access Control (RBAC) is how we lock down access to resources/functio
 Your directory structure should look something like this:
 ```
 07-rbac
-|-- containers
-|   `-- python
-|       |-- code
-|       |   |-- requirements.txt
-|       |   `-- test.py
-|       `-- Dockerfile
 |-- deployment-blue.yml
 |-- deployment-green.yml
 |-- rbac-blue.yml
