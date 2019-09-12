@@ -1,11 +1,5 @@
 # Kubernetes Basics
 
-**NOTE:** this is a work in progress
-
-
-This is a basic repo to host the simple k8s projects I work on as I learn the technology.
-
-It will contain the practical work from the notes created at: https://ns1.ovh/k8s/overview/.
 
 ## What is kubernetes
 
@@ -74,33 +68,14 @@ This cluster uses two nodes which aren’t shown on the logical diagram.
 You can see two deployments of two pods. Kubernetes will attempt to schedule the pods in any given deployment on different nodes, this is to ensure that a failure in a node doesn’t result in a failure in the application. 
 
 
-### Networking
-
-![networking](img/k8s_networking.png "networking")
-
-Deployments and containers have no part in networking.
-
-It's done between the *Ingress*, *Services* and the *Pods*
-
-
-#### Ingress
-
-![ingress](img/k8s_ingress.png "ingress")
-
-Ingress is the network entry point to your internal cluster network.
-
-It contains routing rules to ensure network traffic is routed to the correct locations.
-
-Public Cloud platforms will usually have their own Ingress controller that integrate effectively with their underlying infrastructure. Most Ingress controllers run nginx.
-
-#### Services
+### Services
 
 Services are how we assign networking to a pod.
 
 ![service labels](img/k8s_service.gif "service labels")
 
 This is done by assigning a label to the pod in the format `key:value`: 
-```
+```yaml
 template:
   metadata:
     labels:
@@ -108,18 +83,46 @@ template:
 ```
 
 The service then attached itself to those pods by using a selector:
-```
+```yaml
 spec:
   selector:
     key: value
 ```
 
-There are several types of services that can be deployed the descriptions below are taken from the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/services-networking/service/):
+There are several types of services that can be deployed the descriptions below are taken from the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/services-networking/service/).
+The diagrams are inspired by [this Medium post from Google](https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0).
 
-- **ClusterIP:** Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType.
-- **NodePort:** Exposes the Service on each Node’s IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You’ll be able to contact the NodePort Service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
-- **LoadBalancer:** Exposes the Service externally using a cloud provider’s load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.
-- **ExternalName:** Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.
+#### ClusterIP
+
+![ClusterIP](img/k8s_service_clusterip.png "ClusterIP")
+
+Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType.
+
+#### NodePort
+
+![NodePort](img/k8s_service_nodeport.png "NodePort")
+
+Exposes the Service on each Node’s IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You’ll be able to contact the NodePort Service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
+
+#### LoadBalancer
+
+![Loadbalancer](img/k8s_service_loadbalancer.png "Loadbalancer")
+
+Exposes the Service externally using a cloud provider’s load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.
+
+#### Ingress
+
+![Ingress](img/k8s_service_ingress.png "Ingress")
+
+Ingress is the network entry point to your internal cluster network.
+
+It contains routing rules to ensure network traffic is routed to the correct locations.
+
+Public Cloud platforms will usually have their own Ingress controller that integrate effectively with their underlying infrastructure. Most Ingress controllers run nginx.
+
+#### ExternalName
+
+Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.
 
 
 ## How is kubernetes used
@@ -214,9 +217,4 @@ kubectl exec -it [pod] -- [command]
 - [04 - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces)
 - [05 - ingress](https://github.com/mrmcshane/k8s-training/tree/master/05-ingress)
 - [06 - helm template](https://github.com/mrmcshane/k8s-training/tree/master/06-helm-template)
-- [0x - database cluster](https://github.com/mrmcshane/k8s-training/tree/master/0x-database-cluster)
-- [0x - ingress](https://github.com/mrmcshane/k8s-training/tree/master/0x-ingress)
-- [0x - istio](https://github.com/mrmcshane/k8s-training/tree/master/0x-istio)
 
-This is not complete and will be changed/updated as I go.
-The `0x` headers are for planned work, may or may not happen. 
