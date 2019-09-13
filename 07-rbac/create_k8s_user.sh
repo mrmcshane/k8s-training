@@ -34,8 +34,8 @@ preferences: {}
 users:
 - name: ${user}
   user:
-    client-certificate-data: $(cat usr-blue.crt | base64 -i | paste -sd "" -)
-    client-key-data: $(cat usr-blue.key | base64 -i | paste -sd "" -)
+    client-certificate-data: $(cat ${user}.crt | base64 -i | paste -sd "" -)
+    client-key-data: $(cat ${user}.key | base64 -i | paste -sd "" -)
 EOM
 
 sudo chown -R $(id -u ${user}):$(id -g ${user}) /home/${user}/.kube/

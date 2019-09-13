@@ -8,7 +8,7 @@ Role Based Access Control (RBAC) is how we lock down access to resources/functio
 
 ## RBAC Overview
 
-Go into a little detail how RBAC is condigured with a couple of diagrams.
+Go into a little detail how RBAC is configured with a couple of diagrams.
 
 
 
@@ -69,8 +69,8 @@ preferences: {}
 users:
 - name: ${user}
   user:
-    client-certificate-data: $(cat usr-blue.crt | base64 -i | paste -sd "" -)
-    client-key-data: $(cat usr-blue.key | base64 -i | paste -sd "" -)
+    client-certificate-data: $(cat ${user}.crt | base64 -i | paste -sd "" -)
+    client-key-data: $(cat ${user}.key | base64 -i | paste -sd "" -)
 EOM
 
 sudo chown -R $(id -u ${user}):$(id -g ${user}) /home/${user}/.kube/
@@ -81,7 +81,9 @@ This can be called with the command (ensure it's given a nice `chmod +x`):
 sudo ./create_k8s_user.sh usr-blue blue kubernetes
 ```
 
-There is a more manual method of doing this which requires you to run commands as the user to create the config by passing arguments, but it's easier and more reproducable if you can auto-generate the conifg file based on the admin config with the generated certificates. Automation is better and the less user interaction the better.
+The official method for doing this involves running several commands manually as the individual users, but this is more reproducable for the excersize.
+
+The [Bitnami Docs](https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/) have a great example of how to perform these steps manually.
 
 Once this has been run as the `vagrant` user, you can switch users `sudo su usr-blue` and run `kubectl get all` to see what you have access to.
 
@@ -90,106 +92,212 @@ Once this has been run as the `vagrant` user, you can switch users `sudo su usr-
 
 We will be doing this for two users, `usr-blue` and `usr-green`. We will use `usr-blue` in this example.
 
-### Create User
-
-```yaml
-code: snippet
-```
-Explain what this is and why.
 
 ### Create Policy
 
 ```yaml
-code: snippet
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  namespace: blue
+  name: blue-role
+rules:
+- apiGroups: 
+  - ""
+  - apps
+  - extensions
+  resources: 
+  - deployments
+  - pods
+  - replicasets
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
 ```
-Explain what this is and why.
+Permissions are specified by `Roles`, it determines the api groups, resources, and verbs that you are allowed to run. `Roles` are Namespace level controls.
 
 ### Create Binding
 
 ```yaml
-code: snippet
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: blue-role-binding
+  namespace: blue
+subjects:
+- kind: User
+  name: usr-blue
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: blue-role
+  apiGroup: ""
 ```
-Explain what this is and why.
-
-
+Once a policy is created, we assign it to a user with a `RoleBinding`. These are namespace level bindings that bind a role to a user or group.
 
 
 ## Cluster User
 
-### Create User
-
-```yaml
-code: snippet
-```
-Explain what this is and why.
-
 ### Create Policy
 
 ```yaml
-code: snippet
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cluster-ro-role
+rules:
+- apiGroups: 
+  - ""
+  - apps
+  - extensions
+  resources: 
+  - deployments
+  - pods
+  - replicasets
+  - services
+  verbs:
+  - get
+  - list
+  - watch
 ```
-Explain what this is and why.
+A `ClusterRole` is as the name suggests, a role, but at the cluster level.
 
 ### Create Binding
 
 ```yaml
-code: snippet
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: cluster-ro-role-clusterrolebinding
+subjects:
+- kind: User
+  name: usr-cluster
+  namespace: "*"
+roleRef:
+  kind: ClusterRole
+  name: cluster-ro-role
+  apiGroup: ""
 ```
-Explain what this is and why.
+Again with the ClusterRole, a `ClusterRoleBinding` is a binding but on a cluster level.
 
 
 ## Testing
 
-How to test each user's access.
+### Namespace User
 
-### usr-blue
+Switch user to `usr-blue`:
+```
+sudo sh usr-blue
+```
 
-namespace: blue
-- list pods
-- update pods
+To test the access that is given to a single namespace user, run:
+```
+kubectl get all
+```
 
-namespace: green
-- list pods
-- update pods
+This will request all resources in your default namespace (blue):
+```
+NAME                          READY   STATUS    RESTARTS   AGE
+pod/mariadb-7f86669b9-9htwk   1/1     Running   0          19h
+pod/python-6844b4f794-gs7r7   1/1     Running   0          19h
 
-namespace: all
-- list pods
-- update pods
+NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/mariadb-clusterip   ClusterIP      10.98.145.230    <none>        3306/TCP       19h
+service/python-lb           LoadBalancer   10.101.140.132   <pending>     80:32221/TCP   10s
 
-### usr-green
+NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mariadb   1/1     1            1           19h
+deployment.apps/python    1/1     1            1           19h
 
-namespace: blue
-- list pods
-- update pods
+NAME                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/mariadb-7f86669b9   1         1         1       19h
+replicaset.apps/python-6844b4f794   1         1         1       19h
+Error from server (Forbidden): replicationcontrollers is forbidden: User "usr-blue" cannot list resource "replicationcontrollers" in API group "" in the namespace "blue"
+Error from server (Forbidden): daemonsets.apps is forbidden: User "usr-blue" cannot list resource "daemonsets" in API group "apps" in the namespace "blue"
+Error from server (Forbidden): statefulsets.apps is forbidden: User "usr-blue" cannot list resource "statefulsets" in API group "apps" in the namespace "blue"
+Error from server (Forbidden): horizontalpodautoscalers.autoscaling is forbidden: User "usr-blue" cannot list resource "horizontalpodautoscalers" in API group "autoscaling" in the namespace "blue"
+Error from server (Forbidden): jobs.batch is forbidden: User "usr-blue" cannot list resource "jobs" in API group "batch" in the namespace "blue"
+Error from server (Forbidden): cronjobs.batch is forbidden: User "usr-blue" cannot list resource "cronjobs" in API group "batch" in the namespace "blue"
+```
 
-namespace: green
-- list pods
-- update pods
+To check your cluster level permissions:
+```
+kubectl get all --all-namespaces
+```
 
-namespace: all
-- list pods
-- update pods
-
-### usr-all
-
-namespace: blue
-- list pods
-- update pods
-
-namespace: green
-- list pods
-- update pods
-
-namespace: all
-- list pods
-- update pods
+This user will have no permissions to see anything at the cluster level:
+```
+Error from server (Forbidden): pods is forbidden: User "usr-blue" cannot list resource "pods" in API group "" at the cluster scope
+Error from server (Forbidden): replicationcontrollers is forbidden: User "usr-blue" cannot list resource "replicationcontrollers" in API group "" at the cluster scope
+Error from server (Forbidden): services is forbidden: User "usr-blue" cannot list resource "services" in API group "" at the cluster scope
+Error from server (Forbidden): daemonsets.apps is forbidden: User "usr-blue" cannot list resource "daemonsets" in API group "apps" at the cluster scope
+Error from server (Forbidden): deployments.apps is forbidden: User "usr-blue" cannot list resource "deployments" in API group "apps" at the cluster scope
+Error from server (Forbidden): replicasets.apps is forbidden: User "usr-blue" cannot list resource "replicasets" in API group "apps" at the cluster scope
+Error from server (Forbidden): statefulsets.apps is forbidden: User "usr-blue" cannot list resource "statefulsets" in API group "apps" at the cluster scope
+Error from server (Forbidden): horizontalpodautoscalers.autoscaling is forbidden: User "usr-blue" cannot list resource "horizontalpodautoscalers" in API group "autoscaling" at the cluster scope
+Error from server (Forbidden): jobs.batch is forbidden: User "usr-blue" cannot list resource "jobs" in API group "batch" at the cluster scope
+Error from server (Forbidden): cronjobs.batch is forbidden: User "usr-blue" cannot list resource "cronjobs" in API group "batch" at the cluster scope
+```
 
 
+### Cluster User
 
+Switch user to `usr-cluster`:
+```
+sudo sh usr-cluster
+```
+
+Try and access the pod list:
+```
+kubectl get pod
+```
+
+As we have a cluster user created, it will not natively access other namespaces, so we will get the error:
+```
+No resources found.
+```
+
+If we append `--all-namespaces` to the command, we will see:
+```
+usr-cluster@k8s-head:/home/vagrant/k8$ kubectl get pod --all-namespaces
+NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE
+blue          mariadb-7f86669b9-9htwk            1/1     Running   0          20h
+blue          python-6844b4f794-gs7r7            1/1     Running   0          20h
+green         mariadb-7f86669b9-j4z4q            1/1     Running   0          29m
+green         python-6844b4f794-kckhf            1/1     Running   0          29m
+kube-system   calico-node-5ct8m                  2/2     Running   0          20h
+kube-system   calico-node-f8pff                  2/2     Running   0          20h
+kube-system   calico-node-hph89                  2/2     Running   0          21h
+kube-system   coredns-5c98db65d4-qndmw           1/1     Running   0          21h
+kube-system   coredns-5c98db65d4-stlsr           1/1     Running   0          21h
+kube-system   etcd-k8s-head                      1/1     Running   0          21h
+kube-system   kube-apiserver-k8s-head            1/1     Running   0          21h
+kube-system   kube-controller-manager-k8s-head   1/1     Running   0          21h
+kube-system   kube-proxy-88vwk                   1/1     Running   0          20h
+kube-system   kube-proxy-lwmt5                   1/1     Running   0          20h
+kube-system   kube-proxy-njb5q                   1/1     Running   0          21h
+kube-system   kube-scheduler-k8s-head            1/1     Running   0          21h
+```
+
+To ensure the correct permissions have been applied in the role, we can try and delete one of the pods:
+```
+kubectl delete pod mariadb-7f86669b9-9htwk --namespace=blue
+```
+
+If the permissions have been set correctly, you should see this error:
+```
+Error from server (Forbidden): pods "mariadb-7f86669b9-9htwk" is forbidden: User "usr-cluster" cannot delete resource "pods" in API group "" in the namespace "blue"
+```
 
 
 ## Note
 
-This link helped me:
+These links helped me, and would be useful for further reading:
 
-- [Kubernetes best practices: Organizing with Namespaces](https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-organizing-with-namespaces)
+- [Bitnami Docs - Configure RBAC in your Kubernetes cluster](https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/)
