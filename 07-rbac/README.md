@@ -265,7 +265,6 @@ No resources found.
 
 If we append `--all-namespaces` to the command, we will see:
 ```
-usr-cluster@k8s-head:/home/vagrant/k8$ kubectl get pod --all-namespaces
 NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE
 blue          mariadb-7f86669b9-9htwk            1/1     Running   0          20h
 blue          python-6844b4f794-gs7r7            1/1     Running   0          20h
