@@ -25,7 +25,7 @@ Both deployments have been seperated out into seperate files so you can update t
 
 ## Python Application
 
-I won't paste all of the application code as the codeitself doesn't matter, if you want to use it, it's hosted [here](https://github.com/valtech-uk/kubernetes-training/blob/master/03-stateful-application/containers/python/code/test.py).
+I won't paste all of the application code as the codeitself doesn't matter, if you want to use it, it's hosted [here](https://github.com/mrmcshane/k8s-training/blob/master/03-stateful-application/containers/python/code/test.py).
 
 The main part of the application that matters is the database connection string:
 ```shell
