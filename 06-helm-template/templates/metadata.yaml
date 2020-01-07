@@ -1,7 +1,0 @@
-{{- define "first-helm-application.metadata" -}}
-metadata:
-  name: {{ .Chart.Name }}
-  namespace: {{ .Release.Name }}
-  labels:
-    {{- include "first-helm-application.labels" . | nindent 4 }}
-{{- end -}}
