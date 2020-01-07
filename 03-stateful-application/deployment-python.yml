@@ -23,10 +23,10 @@ kind: Service
 metadata:
   name: python-lb
 spec:
-  type: LoadBalancer
-  loadBalancerIP: 35.228.167.106
-  ports:
-    - port: 80
-      targetPort: 80
+  type: NodePort
+  ports:  
+  - port: 80
+    targetPort: 80
+    nodePort: 30003
   selector:
     component: python-label

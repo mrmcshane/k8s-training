@@ -9,7 +9,7 @@ def databasetest():
 
     db_output = "OFFLINE"
     try:
-        db = MySQLdb.connect(host="mariadb-clusterip.default.svc.cluster.local",
+        db = MySQLdb.connect(host="mariadb-clusterip",
                             user="test_user", 
                             passwd="test_pass",
                             db="test_db") 

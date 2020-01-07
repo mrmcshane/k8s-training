@@ -5,26 +5,41 @@
 
 Kubernetes is an orchestration tool for container technologies, mainly docker.
 
+
 ## Why is Kubernetes used
 
 Docker allows a process to run in an isolated container, bundled with its dependencies. However with docker, these containers need to be managed individually.
 
-Kubernetes manages these containers at scale, assigning them to orchestration groups to manage their replication and availability. With these orchestration groups in place, the groups of containers become highly available and fault tolerant.
+Kubernetes manages these containers at scale, assigning them to groups to manage their replication and availability. 
+
 
 ## Kubernetes Components
 
+Here's a brief oiverview of the main components that make up a Kubernetes system, we will then go into a more detailed description of each component.
+
+Here is an overview:
+
+![overview](img/k8s_blue_overview.png "pods")
+
+- A group of containers is called a **pod**. We always manage the pod, never the container.
+
+- A a pod is created in the environment via a **deployment**. These are usually configured in a **replica set**, this determines how many copies of the pod will be deployed.
+
+- A deployment is created in the **cluster**, or in larger environments a **namespace**, which is a virtual cluster.
+
+
 ### Clusters and Namespaces
 
-A Kubernetes Cluster encompasses every component
+A Kubernetes Cluster encompasses every component, from pods and deployments to nodes and networking. It's synonymous with your kubernetes environment.
 
-A Namespace is a virtual cluster used for application isolation
+A Namespace is a virtual cluster used for seperating different applications or application versions.
 
 
 ### Pods
 
 Pods are the smallest component that Kubernetes manages.
 
-![pods](img/k8s_pods.png "pods")
+![pods](img/k8s_blue_pod.png "pods")
 
 These can be comprised of one or more containers, usually one.
 
@@ -33,26 +48,13 @@ You will usually find more containers in a pod if you have a custom logging or m
 
 ### Deployments
 
-![deployments](img/k8s_deployment.png "deployments")
+![deployments](img/k8s_blue_deployment.png "deployments")
 
 A deployment is how we manage groups of pods. 
 
 Pods are usually configured as a template and assigned to a `Replica Set`, then the replica set is deployed using a deployment. 
 
 This allows us to deploy multiple copies of a pod for high availability.
-
-
-### Logical overview
-
-This is the logical heirarchy of a kubernetes cluster.
-
-![overview](img/k8s_overview_logical.png "overview")
-
-This is what the major components of a Kubernetes cluster looks like.
-
-This layout is the hierarchy in which they would be declared in your manifests.
-
-The main point about this diagram is that networking is not included. Networking has a much simpler layout that we will go into later.
 
 
 ### Physical overview
@@ -92,11 +94,13 @@ spec:
 There are several types of services that can be deployed the descriptions below are taken from the [Kubernetes Documentation](https://kubernetes.io/docs/concepts/services-networking/service/).
 The diagrams are inspired by [this Medium post from Google](https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0).
 
+
 #### ClusterIP
 
 ![ClusterIP](img/k8s_service_clusterip.png "ClusterIP")
 
 Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default ServiceType.
+
 
 #### NodePort
 
@@ -104,11 +108,13 @@ Exposes the Service on a cluster-internal IP. Choosing this value makes the Serv
 
 Exposes the Service on each Node’s IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You’ll be able to contact the NodePort Service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
 
+
 #### LoadBalancer
 
 ![Loadbalancer](img/k8s_service_loadbalancer.png "Loadbalancer")
 
 Exposes the Service externally using a cloud provider’s load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.
+
 
 #### Ingress
 
@@ -119,6 +125,7 @@ Ingress is the network entry point to your internal cluster network.
 It contains routing rules to ensure network traffic is routed to the correct locations.
 
 Public Cloud platforms will usually have their own Ingress controller that integrate effectively with their underlying infrastructure. Most Ingress controllers run nginx.
+
 
 #### ExternalName
 
@@ -169,6 +176,19 @@ kubectl get [resource]
 ![kubectl get](img/kubectl_get.png "kubectl get")
 
 
+### kubectl describe
+
+Describes the details of a resource.
+
+This is used to get more information than is presented by the get command.
+
+```
+kubectl describe [resource]
+```
+
+![kubectl describe](img/kubectl_describe.png "kubectl describe")
+
+
 ### kubectl apply
 
 Apply a configuration to a resource
@@ -215,6 +235,5 @@ kubectl exec -it [pod] -- [command]
 - [02 - multi container pod](https://github.com/mrmcshane/k8s-training/tree/master/02-multi-container-pod)
 - [03 - stateful application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application)
 - [04 - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces)
-- [05 - ingress](https://github.com/mrmcshane/k8s-training/tree/master/05-ingress)
-- [06 - helm template](https://github.com/mrmcshane/k8s-training/tree/master/06-helm-template)
+- [05 - helm template](https://github.com/mrmcshane/k8s-training/tree/master/05-helm-template)
 

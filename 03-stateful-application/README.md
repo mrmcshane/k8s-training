@@ -1,23 +1,21 @@
 # Stateful Application
 
-The source for this can be found on my [github](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application).
-
 Containerization is designed as a stateless technology, however you can still deploy stateful applications such as databases, as long as you keep the stateful data on a seperate volume and take regular backups.
 
 In this project we will be creating a basic python application that will connect to a mariadb database.
 We are only using a single database instance as a database cluster will add more layers of complexity.
 
+![stateful application](../img/03_stateful.png "stateful application")
 
 ## Structure
 
 Your directory structure should look something like this:
 ```
-/
+03-stateful-application
 |-- containers
 |   `-- python
-|       |-- code
-|       |   |-- requirements.txt
-|       |   `-- test.py
+|       |-- app
+|       |   `-- ...
 |       `-- Dockerfile
 |-- deployment-python.yml
 `-- deployment-mariadb.yml
@@ -30,13 +28,13 @@ Both deployments have been seperated out into seperate files so you can update t
 I won't paste all of the application code as the codeitself doesn't matter, if you want to use it, it's hosted [here](https://github.com/mrmcshane/k8s-training/blob/master/03-stateful-application/containers/python/code/test.py).
 
 The main part of the application that matters is the database connection string:
-```
+```shell
 host="mariadb-clusterip.default.svc.cluster.local"
 ```
 This uses the internal DNS of the k8s cluster. Nothing needs to be configured as it's automatically created from the service assigned to the mariadb application.
 
 k8s dns is in in the format:
-```
+```shell
 service.namespace.svc.cluster.local
 ```
 If you haven't specified a namespace (and I haven't), it's `default`.
@@ -66,7 +64,7 @@ CMD [ "python", "./test.py" ]
 ### Deployment
 
 The most simple of deployments, it creates a single pod with a single container running the custom python image:
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -90,8 +88,8 @@ spec:
 
 ### Service
 
-Very simple service, mapping port `30005` externally to port `80` in the deployment:
-```
+Very simple service, mapping port `30003` externally to port `80` in the deployment:
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -101,7 +99,7 @@ spec:
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30005
+      nodePort: 30003
   selector:
     component: python-label
 ```
@@ -114,7 +112,7 @@ We will deploy the default mariadb image and configure it by passing it a Config
 ### Config Map
 
 This is how we will configure our default database.
-```
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -131,7 +129,7 @@ Note the single quotes around `'yes'`, this ensures it is read as a string corre
 ### Deployment
 
 This deployment will create a volume and a single container with that volume assigned:
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -166,7 +164,7 @@ We will be using a ClusterIP service type rather than the NodePort service assig
 
 The ClusterIP is the most restrictive service, which is best for a database. Nothing outside the cluster will be given access:
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:  
@@ -185,41 +183,7 @@ spec:
 ## Deploying the application
 
 It's a simple `apply` to deploy the applications:
-```
-kubectl apply -f deployment-mariadb.yml
-kubectl apply -f deployment-python.yml
-```
-
-## Deploying on GCP
-
-First, we need to create a static IP so we can configure a DNS record to point to our loadbalancer:
-```
-gcloud compute addresses create [name] --region europe-north1
-```
-
-To get the external IP address, we can use:
-```
-gcloud compute addresses describe [name] --region europe-north1 --format='value(address)'
-```
-
-As we are deploying this on a cloud platform, replace the `NodePort` service in the `deployment-python.yml` config with a `Loadbalancer` service containing the Static IP:
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: python-lb
-spec:
-  type: LoadBalancer
-  loadBalancerIP: [Static IP]
-  ports:
-    - port: 80
-      targetPort: 80
-  selector:
-    component: python-label
-```
-
-As before, it's a simple `apply` to deploy the applications:
-```
+```shell
 kubectl apply -f deployment-mariadb.yml
 kubectl apply -f deployment-python.yml
 ```

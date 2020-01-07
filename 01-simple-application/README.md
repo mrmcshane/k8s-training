@@ -4,7 +4,9 @@ A brief example of how to deploy a simple docker container with k8s.
 
 The application we are deploying is a simple python website.
 
-The custom image is then deployed as a single container pod with a number of replicas via a deployment and assigned a service.
+The custom image is deployed as a single container within a pod. The pod is then given its own deployment with the replica set configured for a single replica.
+
+![single replica](../img/01_single_replica.png "single replica")
 
 ## Structure
 
@@ -39,13 +41,13 @@ Our pods will be part of a `deployment` and specified in a `template`.
 
 This is also where we specify the number of replicas of a pod that will be deployed as part of the deployment.
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       component: web-label
@@ -72,7 +74,7 @@ We will be using `type: NodePort`, as it allows direct access to the service fro
 
 ##### Selectors
 
-```
+```yaml
 selector:
   component: web-label
 ```
@@ -81,7 +83,7 @@ selector:
 
 #### Port Mapping
 
-```
+```yaml
 ports:
 - port: 80
     targetPort: 80
@@ -97,16 +99,46 @@ Services also control the port mapping from outside the pod to inside the pod th
 ## Deploying the application
 
 Build web image:
-```
+```shell
 docker build containers/web -t mrmcshane/web
 ```
 
 Push custom image to dockerhub:
-```
+```shell
 docker push mrmcshane/web
 ```
 
 Apply the deployment file:
+```shell
+kubectl apply -f web.yml
+```
+
+## Test the application
+
+Test the application is online:
+```
+http://{minikube-ip}:30001
+```
+
+To see how your environment looks, you can visit the minikube dashboard:
+```
+minikube dashboard
+```
+
+## Scale the application
+
+One of the key features of kubernetes is the ability to scale easily without having to do a full redeploy.
+
+We will scale our application to 3 instances, or replicas. This is done by updating `replicas: 1` from within the deployment configuration block to `replicas: 3`.
+
+**Note:** Replicas in English implies a copy, so if you had one replica of an object you would imagine you would have 2 of an object. This is not the case in kubernetes, 2 replicas means 2 instances of an object.
+
+Once you have updated the number of replicas in the manifest, you can apply the changes:
+
 ```
 kubectl apply -f web.yml
 ```
+
+This should update the number of pods to 3. You can see this on the updated logical diagram:
+
+![three replicas](../img/01_multi_replica.png "three replicas")

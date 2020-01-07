@@ -6,7 +6,7 @@ The application is a simple PHP site. As it's PHP, it will require a frontend we
 
 A pod is meant to be the smallest unit of your application that can run independently. This is why with an application that requires both nginx/php, as neither of them can work independently of each other, you would add them both to a pod.
 
-
+![multi-container](../img/02_multi_container.png "multi-container")
 
 ## Structure
 
@@ -31,7 +31,7 @@ Config Maps are a way of injecting configuration into a container.
 This allows us to inject a custom configuration into an off the shelf nginx webserver image.
 
 The main parts to this are:
-```
+```yaml
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -45,7 +45,7 @@ data:
 ```
 
 Here is the full block with a basic `nginx.conf` to redirect php filetypes to port 9000:
-```
+```yaml
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -87,7 +87,7 @@ We could have put a copy of the application code on both containers diretly, but
 The `php` image is built with the application code baked in. Once the container starts, the first task it performs will be to copy the application code to the shared volume, allowing access to the code form the `nginx` image.
 
 First we create a blank volume under the deployment tamplate:
-```
+```yaml
 spec:
   volumes:
     - name: shared-files
@@ -95,7 +95,7 @@ spec:
 ```
 
 Then we map the volume to each container:
-```
+```yaml
 - image: nginx:alpine
   name: nginx
   volumeMounts:
@@ -104,7 +104,7 @@ Then we map the volume to each container:
 ```
 
 For the `php` container, we add an extra step to run a command to copy the app code over on startup:
-```
+```yaml
 - image: mrmcshane/php
   name: php
   volumeMounts:
@@ -120,7 +120,7 @@ For the `php` container, we add an extra step to run a command to copy the app c
 
 An additional volume is created containing the config map:
 
-```
+```yaml
 spec:
     volumes:
     - name: shared-files
@@ -136,7 +136,7 @@ To apply a config map as a file, we add an additional volume mount to the nginx 
 - **mountPath:** Config file you wish to create.
 - **subPath:** The key of your config within the configmap (as it can contain multiple keys).
 
-```
+```yaml
 - image: nginx:alpine
   name: nginx
   volumeMounts:
@@ -150,7 +150,7 @@ To apply a config map as a file, we add an additional volume mount to the nginx 
 ### Service
 
 The service is pretty straightforward:
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -170,22 +170,23 @@ spec:
 ## Deploy the application
 
 Build custom php image
-```
+```shell
 docker build containers/php -t mrmcshane/php
 ```
 
 Push custom php image to dockerhub
-```
+```shell
 docker push mrmcshane/php
 ```
 
-On the k8s-head:
-```
-docker pull mrmcshane/php
-```
-
 Apply the deployment file:
-```
+```shell
 kubectl apply -f php.yml
 ```
 
+## Test the application
+
+Test the application is online:
+```
+http://{minikube-ip}:31111
+```

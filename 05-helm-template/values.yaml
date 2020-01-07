@@ -1,0 +1,13 @@
+replicaCount: 6
+
+image:
+  repository: mrmcshane
+  name: python
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+
+nodeSelector: {}
+tolerations: []
