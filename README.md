@@ -230,10 +230,10 @@ kubectl exec -it [pod] -- [command]
 
 ## Tasks
 
-- [00 - k8s cluster setup](https://github.com/mrmcshane/k8s-training/tree/master/00-k8s-cluster-setup)
-- [01 - simple application](https://github.com/mrmcshane/k8s-training/tree/master/01-simple-application)
-- [02 - multi container pod](https://github.com/mrmcshane/k8s-training/tree/master/02-multi-container-pod)
-- [03 - stateful application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application)
-- [04 - namespaces](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces)
-- [05 - helm template](https://github.com/mrmcshane/k8s-training/tree/master/05-helm-template)
+- [00 - k8s cluster setup](https://github.com/valtech-uk/kubernetes-training/tree/master/00-k8s-cluster-setup)
+- [01 - simple application](https://github.com/valtech-uk/kubernetes-training/tree/master/01-simple-application)
+- [02 - multi container pod](https://github.com/valtech-uk/kubernetes-training/tree/master/02-multi-container-pod)
+- [03 - stateful application](https://github.com/valtech-uk/kubernetes-training/tree/master/03-stateful-application)
+- [04 - namespaces](https://github.com/valtech-uk/kubernetes-training/tree/master/04-namespaces)
+- [05 - helm template](https://github.com/valtech-uk/kubernetes-training/tree/master/05-helm-template)
 

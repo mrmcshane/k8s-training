@@ -1,6 +1,6 @@
 # Namespaces
 
-The source for this can be found on [github](https://github.com/mrmcshane/k8s-training/tree/master/04-namespaces).
+The source for this can be found on [github](https://github.com/valtech-uk/kubernetes-training/tree/master/04-namespaces).
 
 Namespaces are a way to seperate your cluster into virtual clusters.
 
@@ -27,7 +27,7 @@ The deployment files for mariadb and python have been merged into the same confi
 ## Python Application
 
 
-Like in [03-stateful-application](https://github.com/mrmcshane/k8s-training/tree/master/03-stateful-application), we are testing connectivity with a simple database connection string. However this time, each python application in both namespaces will be configured with two connection strings:
+Like in [03-stateful-application](https://github.com/valtech-uk/kubernetes-training/tree/master/03-stateful-application), we are testing connectivity with a simple database connection string. However this time, each python application in both namespaces will be configured with two connection strings:
 ```shell
 host="mariadb-clusterip.blue"
 host="mariadb-clusterip.green"

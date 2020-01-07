@@ -1,6 +1,6 @@
 # Helm Template
 
-The source for this can be found on [github](https://github.com/mrmcshane/k8s-training/tree/master/05-helm-template).
+The source for this can be found on [github](https://github.com/valtech-uk/kubernetes-training/tree/master/05-helm-template).
 
 Helm is a tool to package, template, and release kubernetes manifests. 
 Combined with Tiller, it can roll out updated versions of applications and check the status of the new deployment before removing the previous version.
